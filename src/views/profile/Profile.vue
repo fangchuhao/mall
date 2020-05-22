@@ -1,15 +1,123 @@
 <template>
   <div>
-    <h2>档案</h2>
+    <scroll class="content">
+      <ul>
+        <li>个人档案1</li>
+        <li>个人档案2</li>
+        <li>个人档案3</li>
+        <li>个人档案4</li>
+        <li>个人档案5</li>
+        <li>个人档案6</li>
+        <li>个人档案7</li>
+        <li>个人档案8</li>
+        <li>个人档案9</li>
+        <li>个人档案10</li>
+        <li>个人档案11</li>
+        <li>个人档案12</li>
+        <li>个人档案13</li>
+        <li>个人档案14</li>
+        <li>个人档案15</li>
+        <li>个人档案16</li>
+        <li>个人档案17</li>
+        <li>个人档案18</li>
+        <li>个人档案19</li>
+        <li>个人档案20</li>
+        <li>个人档案21</li>
+        <li>个人档案22</li>
+        <li>个人档案23</li>
+        <li>个人档案24</li>
+        <li>个人档案25</li>
+        <li>个人档案26</li>
+        <li>个人档案27</li>
+        <li>个人档案28</li>
+        <li>个人档案29</li>
+        <li>个人档案30</li>
+        <li>个人档案31</li>
+        <li>个人档案32</li>
+        <li>个人档案33</li>
+        <li>个人档案34</li>
+        <li>个人档案35</li>
+        <li>个人档案36</li>
+        <li>个人档案37</li>
+        <li>个人档案38</li>
+        <li>个人档案39</li>
+        <li>个人档案40</li>
+        <li>个人档案41</li>
+        <li>个人档案42</li>
+        <li>个人档案43</li>
+        <li>个人档案44</li>
+        <li>个人档案45</li>
+        <li>个人档案46</li>
+        <li>个人档案47</li>
+        <li>个人档案48</li>
+        <li>个人档案49</li>
+        <li>个人档案50</li>
+        <li>个人档案51</li>
+        <li>个人档案52</li>
+        <li>个人档案53</li>
+        <li>个人档案54</li>
+        <li>个人档案55</li>
+        <li>个人档案56</li>
+        <li>个人档案57</li>
+        <li>个人档案58</li>
+        <li>个人档案59</li>
+        <li>个人档案60</li>
+        <li>个人档案61</li>
+        <li>个人档案62</li>
+        <li>个人档案63</li>
+        <li>个人档案64</li>
+        <li>个人档案65</li>
+        <li>个人档案66</li>
+        <li>个人档案67</li>
+        <li>个人档案68</li>
+        <li>个人档案69</li>
+        <li>个人档案70</li>
+        <li>个人档案71</li>
+        <li>个人档案72</li>
+        <li>个人档案73</li>
+        <li>个人档案74</li>
+        <li>个人档案75</li>
+        <li>个人档案76</li>
+        <li>个人档案77</li>
+        <li>个人档案78</li>
+        <li>个人档案79</li>
+        <li>个人档案80</li>
+        <li>个人档案81</li>
+        <li>个人档案82</li>
+        <li>个人档案83</li>
+        <li>个人档案84</li>
+        <li>个人档案85</li>
+        <li>个人档案86</li>
+        <li>个人档案87</li>
+        <li>个人档案88</li>
+        <li>个人档案89</li>
+        <li>个人档案90</li>
+        <li>个人档案91</li>
+        <li>个人档案92</li>
+        <li>个人档案93</li>
+        <li>个人档案94</li>
+        <li>个人档案95</li>
+        <li>个人档案96</li>
+        <li>个人档案97</li>
+        <li>个人档案98</li>
+        <li>个人档案99</li>
+        <li>个人档案100</li>
+      </ul>
+    </scroll>
   </div>
 </template>
 
 <script>
+  import Scroll from "../../components/common/scroll/Scroll";
   export default {
-    name: "Profile"
+    name: "Profile",
+    components: {Scroll}
   }
 </script>
 
 <style scoped>
-
+  .content {
+    height: 300px;
+    overflow: hidden;
+  }
 </style>

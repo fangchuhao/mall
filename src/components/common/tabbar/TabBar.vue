@@ -15,7 +15,7 @@
     display: flex;
     background-color: #e6e6e6;
 
-    position: absolute;
+    position: fixed;
     left: 0;
     right: 0;
     bottom: 0;

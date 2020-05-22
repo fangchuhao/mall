@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export function get(uri) {
+export function get(uri,params) {
   const instance=axios.create({
     baseURL: 'http://123.207.32.32:8000',
     timeout: 5000
@@ -25,5 +25,6 @@ export function get(uri) {
     }
   )
 
-  return instance(uri)
+  return instance.get(uri,params)
 }
+
