@@ -7,12 +7,14 @@
       <detail-shop-info :shop="shop"/>
       <detail-goods-info :detail-info="detailInfo"/>
       <detail-param-info :param-info="paramInfo"/>
+      <detail-comment-info :comment-info="commentInfo"/>
+      <goods-list :goods="recommends"/>
     </scroll>
   </div>
 </template>
 
 <script>
-  import {getDetail,Goods,Shop,GoodsParam} from "network/detail";
+  import {getDetail,getRecommend,Goods,Shop,GoodsParam} from "network/detail";
   import DetailNavBar from "./childComps/DetailNavBar";
   import DetailSwiper from "./childComps/DetailSwiper";
   import DetailBaseInfo from "./childComps/DetailBaseInfo";
@@ -21,6 +23,9 @@
   import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
   import {debounce} from "../../common/utils";
   import DetailParamInfo from "./childComps/DetailParamInfo";
+  import DetailCommentInfo from "./childComps/DetailCommentInfo";
+  import GoodsList from "../../components/content/goods/GoodsList";
+  import {itemListenerMixin} from "../../common/mixin";
 
   export default {
     name: "Detail",
@@ -31,26 +36,36 @@
         goods: {},
         shop: {},
         detailInfo: {},
-        paramInfo: {}
+        paramInfo: {},
+        commentInfo: {},
+        recommends: []
       }
     },
+    mixins: [itemListenerMixin],
     mounted() {
       const refresh=debounce(this.$refs.scroll.refresh,500)
-      this.$bus.$on('imageLoad',() => {
+      this.itemListener= () => {
         refresh()
-      })
+      }
+      this.$bus.$on('goodsImgLoad',this.itemListener)
+    },
+    destroyed() {
+      this.$bus.$off('goodsImgLoad',this.itemListener)
     },
     created() {
       this.iid=this.$route.params.iid
       console.log(this.iid);
       getDetail(this.iid).then(res=>{
-        console.log(res);
+        // console.log(res);
         // const data=res.result
         // this.topImage=res.result.itemInfo.topImages
         // this.goods=new Goods(data.itemInfo,data.columns,data.shopInfo.services)
         // this.shop=new Shop(data.shopInfo)
         // this.detailInfo=data.detailInfo
         // this.paramInfo=new GoodsParam(data.itemParams.info,data.itemParams.rule)
+        // if(data.rate.list) {
+        //   this.commentInfo=data.rate.list[0]
+        // }
 
         this.topImage=[
           'https://s5.mogucdn.com/mlcdn/c45406/200430_8b44d12ehgh59fk22072lh0c8l3b0_3999x5999.jpg_640x960.v1cAC.70.webp','https://s11.mogucdn.com/mlcdn/c45406/200430_68lcc28jc0jlc464lh8b3c2fcb0h3_3999x5999.jpg_640x960.v1cAC.70.webp','https://s11.mogucdn.com/mlcdn/c45406/200430_5jb7h7333617jc6dbihkfjcjl977c_3999x5999.jpg_640x960.v1cAC.70.webp']
@@ -212,9 +227,117 @@
           }
         }
         this.paramInfo=new GoodsParam(itemParams.info,itemParams.rule)
+
+        const rate={
+          list: {
+            user: {
+              avatar: 'https://s11.mogucdn.com/mlcdn/5abf39/180119_7il90gdi4424ij76ba40k943k2d77_466x466.jpg_48x48.webp',
+              uname: '玫瑰玫瑰201810'
+            },
+            content: '弹力大穿起来比较舒服质量相对比较好跟商品描述一样闺蜜也入手了推荐这家店',
+            created: 1590302554,
+            style: ' 浅蓝 / L',
+            images: [
+              'https://s11.mogucdn.com/mlcdn/c45406/200514_4e5l7k3ajhl6efkj2hkfkh59fc3k3_480x640.jpg_200x200.v1cAC.40.webp',
+              'https://s11.mogucdn.com/mlcdn/c45406/191223_404b5a57884aalej0h782f7hebh4g_599x640.jpg_200x200.v1cAC.40.webp',
+              'https://s11.mogucdn.com/mlcdn/c45406/191223_66633b5c1g3h0i8748g7l23dih120_361x640.jpg',
+              'https://s11.mogucdn.com/mlcdn/c45406/191223_1chgbbg70k2l0i8d682aei4ifk090_361x640.jpg'
+            ]
+          }
+        }
+        this.commentInfo=rate.list
+      })
+      getRecommend().then(res=> {
+        console.log(res)
+        // this.recommends=res.data.list
+        const list=[
+          // {
+          //   afav: 10880,
+          //   discount: 700,
+          //   discountPrice: '59.90',
+          //   image: 'https://s5.mogucdn.com/mlcdn/c45406/191026_6k7bi38gjd852246clh63chl43g19_640x960.jpg_320x999.webp',
+          //   price: '85',
+          //   title: '2020春秋季新款高腰牛仔裤女百搭显瘦紧身外穿小脚九分牛仔裤'
+          // },
+          {
+            iid: '2',
+            image: 'https://s11.mogucdn.com/mlcdn/c45406/200312_0kkal2hdf658h6jbh1kid1ik4kfea_640x960.jpg_320x999.webp',
+            price: '79.9',
+            title: '高腰牛仔裤女宽松2020年夏装浅色薄款显瘦显高老爹九分萝卜裤'
+          },
+          {
+            iid: '3',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_5b6ecj7i317le4hgd27h78a6k52dj_640x960.jpg_320x999.webp',
+            price: '79',
+            title: '2020欧洲站时尚春装新款印花蕾丝拼接打底衫宽松T恤女潮'
+          },
+          {
+            iid: '4',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_6a9l6d704j5ah2i0i16fci6c7fi7a_640x960.jpg_320x999.webp',
+            price: '105',
+            title: '牛仔马甲外套女宽松百搭BF复古无袖坎肩外穿背心上衣'
+          },
+          {
+            iid: '5',
+            image: 'https://s5.mogucdn.com/mlcdn/c45406/200423_7ehe2idl025jbl6aed6345gc399ll_3800x5700.jpg_320x999.webp',
+            price: '74',
+            title: '夏新款韩版时尚泫雅风洋气减龄遮肚仙女裙法式仙女雪纺连衣裙子女'
+          },
+          {
+            iid: '6',
+            image: 'https://s11.mogucdn.com/mlcdn/c45406/200312_0kkal2hdf658h6jbh1kid1ik4kfea_640x960.jpg_320x999.webp',
+            price: '79.9',
+            title: '高腰牛仔裤女宽松2020年夏装浅色薄款显瘦显高老爹九分萝卜裤'
+          },
+          {
+            iid: '7',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_5b6ecj7i317le4hgd27h78a6k52dj_640x960.jpg_320x999.webp',
+            price: '79',
+            title: '2020欧洲站时尚春装新款印花蕾丝拼接打底衫宽松T恤女潮'
+          },
+          {
+            iid: '8',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_6a9l6d704j5ah2i0i16fci6c7fi7a_640x960.jpg_320x999.webp',
+            price: '105',
+            title: '牛仔马甲外套女宽松百搭BF复古无袖坎肩外穿背心上衣'
+          },
+          {
+            iid: '9',
+            image: 'https://s5.mogucdn.com/mlcdn/c45406/200423_7ehe2idl025jbl6aed6345gc399ll_3800x5700.jpg_320x999.webp',
+            price: '74',
+            title: '夏新款韩版时尚泫雅风洋气减龄遮肚仙女裙法式仙女雪纺连衣裙子女'
+          },
+          {
+            iid: '10',
+            image: 'https://s11.mogucdn.com/mlcdn/c45406/200312_0kkal2hdf658h6jbh1kid1ik4kfea_640x960.jpg_320x999.webp',
+            price: '79.9',
+            title: '高腰牛仔裤女宽松2020年夏装浅色薄款显瘦显高老爹九分萝卜裤'
+          },
+          {
+            iid: '11',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_5b6ecj7i317le4hgd27h78a6k52dj_640x960.jpg_320x999.webp',
+            price: '79',
+            title: '2020欧洲站时尚春装新款印花蕾丝拼接打底衫宽松T恤女潮'
+          },
+          {
+            iid: '12',
+            image: 'https://s11.mogucdn.com/mlcdn/55cf19/200221_6a9l6d704j5ah2i0i16fci6c7fi7a_640x960.jpg_320x999.webp',
+            price: '105',
+            title: '牛仔马甲外套女宽松百搭BF复古无袖坎肩外穿背心上衣'
+          },
+          {
+            iid: '13',
+            image: 'https://s5.mogucdn.com/mlcdn/c45406/200423_7ehe2idl025jbl6aed6345gc399ll_3800x5700.jpg_320x999.webp',
+            price: '74',
+            title: '夏新款韩版时尚泫雅风洋气减龄遮肚仙女裙法式仙女雪纺连衣裙子女'
+          }
+        ]
+        this.recommends=list
       })
     },
     components: {
+      GoodsList,
+      DetailCommentInfo,
       DetailParamInfo,
       DetailGoodsInfo,
       Scroll,

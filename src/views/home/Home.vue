@@ -38,6 +38,7 @@
 
   import {getMultiData,getHomeGoods} from "network/home";
   import {debounce} from "common/utils";
+  import {itemListenerMixin} from "../../common/mixin";
 
   export default {
     name: "Home",
@@ -87,20 +88,18 @@
       this.getHomeGoods2('news')
       this.getHomeGoods2('sells')
     },
-    // activated() {
-    //   this.$refs.scroll.scrollTo(0,this.contentY,0)
-    //   this.$refs.scroll.refresh()
-    // },
-    // deactivated() {
-    //   this.contentY=-this.$refs.scroll.scroll.y
-    //   console.log(this.contentY)
-    // },
+    activated() {
+      console.log('[activated]this.contentY: '+this.contentY)
+      this.$refs.scroll.scrollTo(0,this.contentY,0)
+      this.$refs.scroll.refresh()
+    },
+    deactivated() {
+      this.contentY=this.$refs.scroll.scroll.y
+      this.$bus.$off('goodsImgLoad',this.itemListener)
+      console.log('[deactivated]this.contentY: '+this.contentY)
+    },
+    mixins: [itemListenerMixin],
     mounted() {
-      const refresh=debounce(this.$refs.scroll.refresh,500)
-      this.$bus.$on('goodsImgLoad',() => {
-        refresh()
-      })
-
       setTimeout(()=>{
         this.tabControlOffsetTop=this.$refs.tabControl.$el.offsetTop
         console.log(this.tabControlOffsetTop)

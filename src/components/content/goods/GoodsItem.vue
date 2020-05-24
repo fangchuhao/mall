@@ -22,10 +22,17 @@
     },
     methods: {
       imageLoad() {
+        // if(this.$route.path.indexOf('/home')) {
+        //   this.$bus.$emit('goodsImgLoad')
+        // }else if(this.$route.path.indexOf('/detail')) {
+        //   this.$bus.$emit('detailGoodsImgLoad')
+        // }
         this.$bus.$emit('goodsImgLoad')
       },
       toGoodsDetail() {
-        this.$router.push('/detail/'+'111')
+        this.$router.push('/detail/'+'这是一个id',() => {}, (e) => {
+          console.log('输出报错',e)
+        })
         // this.$router.push('/detail/'+this.goodsItem.iid)
       }
     }
