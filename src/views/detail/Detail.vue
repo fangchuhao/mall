@@ -1,15 +1,25 @@
 <template>
   <div class="detail">
-    <detail-nav-bar class="detail-nav"/>
-    <scroll class="content" ref="scroll">
+    <detail-nav-bar class="detail-nav" @itemClick="scrollToItem" ref="detailNav"/>
+    <scroll class="content"
+            ref="scroll"
+            @scroll="contentScroll"
+            :probe-type="3">
+      <div>
+        <ul>
+          <li v-for="item in $store.state.cartList">{{item}}</li>
+        </ul>
+      </div>
       <detail-swiper :top-image="topImage"/>
       <detail-base-info :goods="goods"/>
       <detail-shop-info :shop="shop"/>
-      <detail-goods-info :detail-info="detailInfo"/>
-      <detail-param-info :param-info="paramInfo"/>
-      <detail-comment-info :comment-info="commentInfo"/>
-      <goods-list :goods="recommends"/>
+      <detail-goods-info :detail-info="detailInfo" @imageLoad="detailImageLoad"/>
+      <detail-param-info :param-info="paramInfo" ref="params"/>
+      <detail-comment-info :comment-info="commentInfo" ref="comments"/>
+      <goods-list :goods="recommends" ref="recommends"/>
     </scroll>
+    <detail-bottom-bar @addToCart="addToCart"/>
+    <back-top class="backTop" @click.native="backTopClick" v-show="isShowBackTop"/>
   </div>
 </template>
 
@@ -25,7 +35,8 @@
   import DetailParamInfo from "./childComps/DetailParamInfo";
   import DetailCommentInfo from "./childComps/DetailCommentInfo";
   import GoodsList from "../../components/content/goods/GoodsList";
-  import {itemListenerMixin} from "../../common/mixin";
+  import {backToTop, itemListenerMixin} from "../../common/mixin";
+  import DetailBottomBar from "./childComps/DetailBottomBar";
 
   export default {
     name: "Detail",
@@ -38,10 +49,13 @@
         detailInfo: {},
         paramInfo: {},
         commentInfo: {},
-        recommends: []
+        recommends: [],
+        themeScrollY: [],
+        getThemeScrollY: null,
+        navCurrentIndex: 0
       }
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin,backToTop],
     mounted() {
       const refresh=debounce(this.$refs.scroll.refresh,500)
       this.itemListener= () => {
@@ -73,7 +87,7 @@
           title: '白色短袖T恤女宽松韩2020夏新款女装卡通刺绣学院风纯棉上衣',
           desc:'新款上市~',
           discount:'活动价',
-          price:'￥38.50',
+          price:'￥38.50~69.00',
           oldPrice:'￥69.00',
           lowNowPrice:'￥38.50'
         }
@@ -334,8 +348,20 @@
         ]
         this.recommends=list
       })
+      // this.$bus.$on('imageLoad',()=> {
+      //   this.newRefresh()
+      // })
+      this.getThemeScrollY=debounce(()=>{
+        this.themeScrollY.push(0)
+        this.themeScrollY.push(this.$refs.params.$el.offsetTop)
+        this.themeScrollY.push(this.$refs.comments.$el.offsetTop)
+        this.themeScrollY.push(this.$refs.recommends.$el.offsetTop)
+        this.themeScrollY.push(Number.MAX_VALUE)
+        console.log(this.themeScrollY)
+      })
     },
     components: {
+      DetailBottomBar,
       GoodsList,
       DetailCommentInfo,
       DetailParamInfo,
@@ -347,7 +373,48 @@
       DetailNavBar
     },
     methods: {
+      detailImageLoad() {
+        this.newRefresh()
+        this.getThemeScrollY()
+      },
+      scrollToItem(index) {
+        this.$refs.scroll.scrollTo(0,-this.themeScrollY[index],1000)
+      },
+      contentScroll(position) {
+        const positionY=-position.y;
+        this.contentY=positionY;
+        const length=this.themeScrollY.length-1
+        const tempThemeScrollY=this.themeScrollY
+        for(let i=0;i<length;i++) {
+          // 1.普通做法
+          // if(this.navCurrentIndex!=i && (i<length-1 &&
+          //   positionY>=tempThemeScrollY[i] && positionY<tempThemeScrollY[i+1])
+          //   || (i===length-1 && positionY>=tempThemeScrollY[i])) {
+          //   console.log(i)
+          //   this.navCurrentIndex=i
+          //   this.$refs.detailNav.currentIndex=i
+          // }
+          // 2.hack做法
+          // 给 this.themeScrollY 添加多一个值 值是Number.MAX_VALUE
+          if(this.navCurrentIndex!=i &&
+            (positionY>=tempThemeScrollY[i] && positionY<tempThemeScrollY[i+1])) {
+            console.log(i)
+            this.navCurrentIndex=i
+            this.$refs.detailNav.currentIndex=i
+          }
+        }
+      },
+      addToCart() {
+        const product={}
 
+        product.title=this.goods.title
+        product.image=this.topImage[0]
+        product.desc=this.goods.desc
+        product.price=this.goods.realPrice
+        product.iid=this.iid
+        // 如何将数据发送到购物车，这里用到Vuex
+        this.$store.dispatch('addCart',product)
+      }
     }
   }
 </script>
@@ -360,11 +427,14 @@
     height: 100vh;
   }
   .content {
-    position: absolute;
-    top: 44px;
-    bottom: 0px;
-    left: 0;
-    right: 0;
-    overflow: hidden;
+    /*position: absolute;*/
+    /*top: 44px;*/
+    /*bottom: 0;*/
+    /*left: 0;*/
+    /*right: 0;*/
+    /*overflow: hidden;*/
+    height: calc(100% - 102px);
+    background-color: #fff;
   }
+
 </style>

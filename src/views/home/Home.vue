@@ -29,7 +29,6 @@
   import TabControl from "components/content/tabControl/TabControl";
   import GoodsList from "components/content/goods/GoodsList";
   import Scroll from "components/common/scroll/Scroll";
-  import BackTop from "components/content/backTop/BackTop";
 
   import HomeSwiper from "./childComps/HomeSwiper";
   import HomeRecommendVue from "./childComps/HomeRecommendVue";
@@ -37,8 +36,7 @@
 
 
   import {getMultiData,getHomeGoods} from "network/home";
-  import {debounce} from "common/utils";
-  import {itemListenerMixin} from "../../common/mixin";
+  import {itemListenerMixin,backToTop} from "../../common/mixin";
 
   export default {
     name: "Home",
@@ -53,16 +51,12 @@
           'sells': {page: 0, list: []}
         },
         currentType: 'pops',
-        contentY: 0,
         tabControlOffsetTop: 561
       }
     },
     computed: {
       showGoods() {
         return this.goods[this.currentType].list
-      },
-      isShowBackTop() {
-        return this.contentY > 700
       },
       isFixTabControl() {
         return this.contentY > this.tabControlOffsetTop
@@ -73,7 +67,6 @@
       TabControl,
       GoodsList,
       Scroll,
-      BackTop,
 
       HomeSwiper,
       HomeRecommendVue,
@@ -98,7 +91,7 @@
       this.$bus.$off('goodsImgLoad',this.itemListener)
       console.log('[deactivated]this.contentY: '+this.contentY)
     },
-    mixins: [itemListenerMixin],
+    mixins: [itemListenerMixin,backToTop],
     mounted() {
       setTimeout(()=>{
         this.tabControlOffsetTop=this.$refs.tabControl.$el.offsetTop
@@ -121,9 +114,6 @@
         this.$refs.tabControl2.currentIndex=index
         this.$refs.tabControl.currentIndex=index
         // console.log(this.currentType)
-      },
-      backTopClick() {
-        this.$refs.scroll.scrollTo(0,0)
       },
       contentScroll(position) {
         this.contentY=-position.y
@@ -522,9 +512,5 @@
     /*overflow: hidden;*/
     /*margin-top: 44px;*/
   }
-  .backTop {
-    position: fixed;
-    bottom: 60px;
-    right: 10px;
-  }
+
 </style>

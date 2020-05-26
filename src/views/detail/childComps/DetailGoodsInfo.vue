@@ -6,9 +6,11 @@
       <div class="desc">{{detailInfo.desc}}</div>
       <div class="end"></div>
     </div>
-    <div class="info-key">{{detailInfo.detailImage[0].key}}</div>
-    <div class="info-list">
-      <img v-for="(item, index) in detailInfo.detailImage[0].list" :key="index" :src="item" @load="imgLoad" alt="">
+    <div v-for="itemImage in detailInfo.detailImage">
+      <div class="info-key">{{itemImage.key}}</div>
+      <div class="info-list">
+        <img v-for="(item, index) in itemImage.list" :key="index" :src="item" @load="imgLoad" alt="">
+      </div>
     </div>
   </div>
 </template>
@@ -30,8 +32,8 @@
     methods: {
 	    imgLoad() {
         if (++this.counter === this.imagesLength) {
-	        // this.$emit('imageLoad')
-          this.$bus.$emit('imageLoad')
+	        this.$emit('imageLoad')
+          // this.$bus.$emit('imageLoad')
         }
 	    }
     },

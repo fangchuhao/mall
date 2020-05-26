@@ -14,4 +14,9 @@
   .back-top img {
     width: 45px;
   }
+  .back-top {
+    position: fixed;
+    bottom: 60px;
+    right: 10px;
+  }
 </style>
