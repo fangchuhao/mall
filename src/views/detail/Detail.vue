@@ -32,6 +32,7 @@
   import GoodsList from "../../components/content/goods/GoodsList";
   import {backToTop, itemListenerMixin} from "../../common/mixin";
   import DetailBottomBar from "./childComps/DetailBottomBar";
+  import {mapActions} from 'vuex'
 
   export default {
     name: "Detail",
@@ -47,7 +48,7 @@
         recommends: [],
         themeScrollY: [],
         getThemeScrollY: null,
-        navCurrentIndex: 0
+        navCurrentIndex: 0,
       }
     },
     mixins: [itemListenerMixin,backToTop],
@@ -352,7 +353,6 @@
         this.themeScrollY.push(this.$refs.comments.$el.offsetTop)
         this.themeScrollY.push(this.$refs.recommends.$el.offsetTop)
         this.themeScrollY.push(Number.MAX_VALUE)
-        console.log(this.themeScrollY)
       })
     },
     components: {
@@ -368,6 +368,7 @@
       DetailNavBar
     },
     methods: {
+      ...mapActions(['addCart']),
       detailImageLoad() {
         this.newRefresh()
         this.getThemeScrollY()
@@ -408,7 +409,10 @@
         product.price=this.goods.realPrice
         product.iid=this.iid
         // 如何将数据发送到购物车，这里用到Vuex
-        this.$store.dispatch('addCart',product)
+        // this.$store.dispatch('addCart',product)
+        this.addCart(product).then(res=>{
+          this.$toast.show(res,1000)
+        })
       }
     }
   }
